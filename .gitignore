@@ -1,2 +1,6 @@
-.vsode/*
+.vscode/*
 *.out
+# ignore anything which don't have extension
+*
+!*/
+!*.*
