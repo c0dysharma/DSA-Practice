@@ -22,6 +22,7 @@ void print(const Node *head){
 
 Node* createLinkedList(void){
     // takes space seperated input untill newLine character is appeared
+        // lil bug found: waits for  new value if existing input isn't stripped
     int data;
     std::cin >> data;
     char ch = std::cin.peek();
@@ -31,19 +32,23 @@ Node* createLinkedList(void){
     while(ch != '\n'){
         Node* newNode = new Node(data);
         // means this is the very first node
-        if(head == nullptr)
+        if(head == nullptr){
             head = newNode;
+            tail = newNode;
+        }
         else{
-            // we need to reach end of the list to add new element
-            tail = head;
-            while (tail->next != nullptr){
-                tail = tail->next;
-            }tail->next = newNode;
+        // update existing tail
+            tail->next = newNode;
+            tail = newNode;
         }
         std::cin >> data;
         ch = std::cin.peek();
     }
     //appending the last element
-    tail->next->next = new Node(data);
+    if(head != nullptr) // if more than 1 item is present
+        tail->next = new Node(data);
+    else
+        head = new Node(data);
+        
     return head;
 }
