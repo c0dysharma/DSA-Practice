@@ -247,3 +247,77 @@ Node* removeDuplicates(Node *head){
     }
     return head;
 }
+
+// print reverse LL
+void printReverseLL(Node* head){
+  // base case
+  if(head == nullptr)
+    return;
+  
+  // recursive call
+  printReverseLL(head->next);
+  // smaller caclculation
+  std::cout << head->data << ' ';
+}
+
+// reverse the linked list
+Node *returnReverseLL(Node* head){
+  int len = getLength(head);
+  int arr[len];
+  // fill the array
+  for(int i=len-1; i>=0; i--){
+    arr[i] = head->data;
+    head = head->next;
+  }// create new Linked List
+  Node* temp = new Node(arr[0]);
+  Node* newLL = temp;
+  int count = 1;
+  while(count < len){
+    temp->next = new Node(arr[count]);
+    temp = temp->next;
+    count++;
+  }
+  return newLL;
+}
+
+// check palindrome
+bool checkPalindrome(Node* head){
+  Node* head2 = returnReverseLL(head);
+
+  while(head != nullptr){
+    if(head->data == head2->data){
+      head = head->next;
+      head2 = head2->next;
+      continue;
+    }
+    deleteList(head2);
+    return false;
+  }
+  deleteList(head2);
+  return true;
+  
+  // // dividing the LL in two parts
+  // int mid = getLength(head)/2;
+  // // reaching on mid point
+  // int count = 0;
+  // Node* temp = head;
+  // while(count < mid-1){
+  //   count++;
+  //   temp = temp->next;
+  // }
+  // Node* head2 = temp->next;
+  // temp->next = nullptr;
+
+  // // reverse 2nd part
+
+
+  // // comparing both LLs
+  // while(head->data != head2->data){
+  //   head = head->next; 
+  //   head2 = head2->next;
+  //   // if only one pointer reached till end;
+  //   if(head==nullptr ^ head2==nullptr)
+  //     return true;
+  // }
+  // return false;
+}

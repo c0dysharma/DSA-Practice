@@ -21,9 +21,10 @@ int main(void) {
   //   head = appenedNtoFirst(head, i);
   //   print(head);
 
-  head = removeDuplicates(head);
-  print(head);
-
+  // head = removeDuplicates(head);
+  // print(head);
+  // printReverseLL(head);
+  std::cout << std::boolalpha << checkPalindrome(head) << std::endl;
   deleteList(head);
 
   return 0;
