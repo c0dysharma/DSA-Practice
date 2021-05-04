@@ -2,7 +2,8 @@
 
 int main(void) {
   Node *head = createLinkedList();
-  print(head);
+  // print(head);
+  Node *head2 = createLinkedList();
 
   //   int data, i;
   //   std::cin >> data >> i;
@@ -24,8 +25,12 @@ int main(void) {
   // head = removeDuplicates(head);
   // print(head);
   // printReverseLL(head);
-  std::cout << std::boolalpha << checkPalindrome(head) << std::endl;
-  deleteList(head);
-
+  // Node* finalLL = mergeTwoSortedLL(head, head2);
+  // print(finalLL);
+  // printIthPosition(finalLL,2);
+  // deleteList(finalLL);
+  Node* sortedLL = mergeTwoSortedLL(head,head2);
+  print(sortedLL);
+  deleteList(sortedLL);
   return 0;
 }

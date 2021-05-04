@@ -71,18 +71,23 @@ int getLength(Node *head) {
   // }
   // return len;
 }
+// reach ith node
+Node *reachBeforeINode(Node *head, int i) {
+  int lengthOfList = getLength(head);
+  if (i > lengthOfList)
+    return head;
+
+  for (int j = 0; j < i-1; j++) {
+    head = head->next;
+  }
+
+  return head;
+}
 
 // print i-th position
 void printIthPosition(Node *head, int i) {
-  int lengthOfList = getLength(head);
-  if (i > lengthOfList)
-    return;
-
-  // Node* temp = head;
-  for (int j = 0; j < i; j++) {
-    head = head->next;
-  }
-  std::cout << head->data << std::endl;
+  head = reachBeforeINode(head, i);
+  std::cout << head->next->data << std::endl;
 }
 
 // insert at i-th position
@@ -213,10 +218,8 @@ Node *appenedNtoFirst(Node *head, int n) {
 
   int curr = len - n - 1;
   // reach on the curr index
-  Node *temp = head;
-  for (int i = 0; i < curr; i++) {
-    temp = temp->next;
-  }
+  Node *temp = reachBeforeINode(head, curr);
+  temp = temp->next;
   // getting new  head
   Node *head2 = temp->next;
   // breaking the list into 2 parts
@@ -232,28 +235,28 @@ Node *appenedNtoFirst(Node *head, int n) {
 }
 
 // remove duplicates from ordered list
-Node* removeDuplicates(Node *head){
-    if(head->next == nullptr)
-        return head;
-
-    // recursive call
-    Node *t2 = removeDuplicates(head->next);
-    // smaller calcculation
-    if(head->data == t2->data){
-        Node* nextNode = t2->next;
-        // t2 = t2->next;
-        delete t2;
-        head->next = nextNode;
-    }
+Node *removeDuplicates(Node *head) {
+  if (head->next == nullptr)
     return head;
+
+  // recursive call
+  Node *t2 = removeDuplicates(head->next);
+  // smaller calcculation
+  if (head->data == t2->data) {
+    Node *nextNode = t2->next;
+    // t2 = t2->next;
+    delete t2;
+    head->next = nextNode;
+  }
+  return head;
 }
 
 // print reverse LL
-void printReverseLL(Node* head){
+void printReverseLL(Node *head) {
   // base case
-  if(head == nullptr)
+  if (head == nullptr)
     return;
-  
+
   // recursive call
   printReverseLL(head->next);
   // smaller caclculation
@@ -261,18 +264,18 @@ void printReverseLL(Node* head){
 }
 
 // reverse the linked list
-Node *returnReverseLL(Node* head){
+Node *returnReverseLL(Node *head) {
   int len = getLength(head);
   int arr[len];
   // fill the array
-  for(int i=len-1; i>=0; i--){
+  for (int i = len - 1; i >= 0; i--) {
     arr[i] = head->data;
     head = head->next;
-  }// create new Linked List
-  Node* temp = new Node(arr[0]);
-  Node* newLL = temp;
+  } // create new Linked List
+  Node *temp = new Node(arr[0]);
+  Node *newLL = temp;
   int count = 1;
-  while(count < len){
+  while (count < len) {
     temp->next = new Node(arr[count]);
     temp = temp->next;
     count++;
@@ -281,11 +284,11 @@ Node *returnReverseLL(Node* head){
 }
 
 // check palindrome
-bool checkPalindrome(Node* head){
-  Node* head2 = returnReverseLL(head);
+bool checkPalindrome(Node *head) {
+  Node *head2 = returnReverseLL(head);
 
-  while(head != nullptr){
-    if(head->data == head2->data){
+  while (head != nullptr) {
+    if (head->data == head2->data) {
       head = head->next;
       head2 = head2->next;
       continue;
@@ -295,7 +298,7 @@ bool checkPalindrome(Node* head){
   }
   deleteList(head2);
   return true;
-  
+
   // // dividing the LL in two parts
   // int mid = getLength(head)/2;
   // // reaching on mid point
@@ -310,14 +313,98 @@ bool checkPalindrome(Node* head){
 
   // // reverse 2nd part
 
-
   // // comparing both LLs
   // while(head->data != head2->data){
-  //   head = head->next; 
+  //   head = head->next;
   //   head2 = head2->next;
   //   // if only one pointer reached till end;
   //   if(head==nullptr ^ head2==nullptr)
   //     return true;
   // }
   // return false;
+}
+
+// merge two shorted LL
+Node *mergeTwoSortedLL(Node *head1, Node *head2) {
+  // recursive apporoach
+
+  // base case
+  if(head1 == nullptr)
+    return head2;
+  else if(head2 == nullptr)
+    return head1;
+
+  Node *result = nullptr;
+  // recursive call with smaller calculation
+  if(head1->data <= head2->data){
+    result = head1;
+    result->next = mergeTwoSortedLL(head1->next, head2);
+  }else{
+    result = head2;
+    result->next = mergeTwoSortedLL(head1, head2->next);
+  }
+
+  return result;
+
+  // iterative approach
+  // // if any LL is null return the other one
+  // if (head1 == nullptr)
+  //   return head2;
+  // if (head2 == nullptr)
+  //   return head1;
+
+  // // Initial Values
+  // Node *finalHead = nullptr;
+  // if (head1->data <= head2->data) {
+  //   finalHead = head1;
+  //   head1 = head1->next;
+  // } else {
+  //   finalHead = head2;
+  //   head2 = head2->next;
+  // }
+  // Node *finalTail = finalHead;
+
+  // // main loop
+  // while (head1 != nullptr && head2 != nullptr) {
+  //   if (head1->data <= head2->data) {
+  //     finalTail->next = head1;
+  //     finalTail = finalTail->next;
+  //     head1 = head1->next;
+  //   } else {
+  //     finalTail->next = head2;
+  //     finalTail = finalTail->next;
+  //     head2 = head2->next;
+  //   }
+  // }
+  // // when one or both of LL are exhausted
+  // if (head1 == nullptr)
+  //   finalTail->next = head2;
+
+  // else
+  //   finalTail->next = head1;
+
+  // return finalHead;
+}
+
+// merge sort
+Node *mergeSort(Node *head) {
+  // base case: when we have 0 or 1 element
+  if (head == nullptr || head->next == nullptr)
+    return head;
+
+  // helper values
+  // Node *head1 = head;
+  int mid = getLength(head)/2;
+  Node *beforeMidHead = reachBeforeINode(head, mid);
+
+  //divide the LL
+  Node *head2 = beforeMidHead->next;
+  beforeMidHead->next = nullptr;
+
+  //recursive call
+  Node* a = mergeSort(head);
+  Node* b = mergeSort(head2);
+
+  //smaller Calculation
+  return mergeTwoSortedLL(a,b);
 }
