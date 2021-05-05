@@ -199,6 +199,7 @@ void deleteList(Node *head) {
 
 // search node: returns -1 if not found otherwise index of value
 int findNode(Node *head, int val) {
+  // iterative approach
   int count = -1;
   while (head != nullptr) {
     count++;
@@ -207,6 +208,23 @@ int findNode(Node *head, int val) {
     head = head->next;
   }
   return -1;
+
+  // recursive approach
+
+  // // base case
+  // if (head == nullptr)
+  //   return -1;
+
+  // // smaller calculation
+  // int smallerOutput;
+  // if(head->data == val)
+  //   return 0;
+  // else // recursive calll
+  //   smallerOutput = findNode(head->next, val);
+
+  // if(smallerOutput != -1)
+  //   return 1+smallerOutput;
+  // return smallerOutput;
 }
 
 // Appened last n items to first
@@ -273,8 +291,8 @@ Node *returnReverseLL(Node *head) {
   // reucursive call
   Node *smallerOutput = returnReverseLL(head->next);
   // smaller Calculation
-  //last element is just next element of head
-  Node* tail = head->next;
+  // last element is just next element of head
+  Node *tail = head->next;
   // move first element to the end
   tail->next = head;
   head->next = nullptr;
@@ -424,3 +442,62 @@ Node *mergeSort(Node *head) {
   // smaller Calculation
   return mergeTwoSortedLL(a, b);
 }
+
+// append element to last
+void appendLast(Node *&linkedList, int data, Node *&head, Node *&tail) {
+  // checks if list is empty or not
+  if (linkedList == nullptr) {
+    // create first element
+    Node *newNode = new Node(data);
+    linkedList = newNode;
+    head = linkedList;
+    tail = linkedList;
+    tail->next = nullptr;
+    return;
+  }
+  // there are existing elments
+  head = linkedList;
+  Node* newNode = new Node(data);
+  tail->next = newNode;
+  tail = tail->next;
+  tail->next = nullptr;
+}
+
+// return odd before even
+Node *returnOddBeforeEven(Node *head) {
+  // when head has only 1 or 0 elements
+  if (head == nullptr || head->next == nullptr)
+    return head;
+
+  // helper pointers
+  Node *oddHead = nullptr;
+  Node *oddTail = nullptr;
+  Node *evenHead = nullptr;
+  Node *evenTail = nullptr;
+  // odd and even LL
+  Node *oddLL = nullptr;
+  Node *evenLL = nullptr;
+
+  // dirty stuff (calculation)
+  // filling up both LL
+  while (head != nullptr) {
+    // check if odd or even
+    bool val = head->data % 2;
+
+    if (val) // when val is even
+      appendLast(oddLL, head->data, oddHead, oddTail);
+    else
+      appendLast(evenLL, head->data, evenHead, evenTail);
+
+    head = head->next;
+  }
+
+  // checking if there isn't any odd elments
+  if (oddLL == nullptr)
+    return evenHead;
+  else {
+    oddTail->next = evenHead;
+    return oddHead;
+  }
+}
+

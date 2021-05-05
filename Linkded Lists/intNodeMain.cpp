@@ -14,13 +14,16 @@ int main(void) {
   //   print(head);
   //   std::cout << getLength(head) << std::endl;
 
-  //   int val;
-  //   std::cin >> val;
-  //   std::cout << findNode(head, val) << std::endl;
+    // int val;
+    // std::cin >> val;
+    // std::cout << findNode(head, val) << std::endl;
   //   int i;
   //   std::cin >> i;
   //   head = appenedNtoFirst(head, i);
   //   print(head);
+  head = returnOddBeforeEven(head);
+  print(head);
+  deleteList(head);
 
   // head = removeDuplicates(head);
   // print(head);
@@ -32,8 +35,8 @@ int main(void) {
   // Node* sortedLL = mergeTwoSortedLL(head,head2);
   // print(sortedLL);
   // deleteList(sortedLL);
-  Node* head1 = returnReverseLL(head);
-  print(head1);
-  deleteList(head1);
+  // Node* head1 = returnReverseLL(head);
+  // print(head1);
+  // deleteList(head1);
   return 0;
 }
