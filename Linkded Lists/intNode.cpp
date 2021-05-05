@@ -77,7 +77,7 @@ Node *reachBeforeINode(Node *head, int i) {
   if (i > lengthOfList)
     return head;
 
-  for (int j = 0; j < i-1; j++) {
+  for (int j = 0; j < i - 1; j++) {
     head = head->next;
   }
 
@@ -265,22 +265,24 @@ void printReverseLL(Node *head) {
 
 // reverse the linked list
 Node *returnReverseLL(Node *head) {
-  int len = getLength(head);
-  int arr[len];
-  // fill the array
-  for (int i = len - 1; i >= 0; i--) {
-    arr[i] = head->data;
-    head = head->next;
-  } // create new Linked List
-  Node *temp = new Node(arr[0]);
-  Node *newLL = temp;
-  int count = 1;
-  while (count < len) {
-    temp->next = new Node(arr[count]);
+  // base case
+  if (head == nullptr || head->next == nullptr)
+    return head;
+
+  // reucursive call
+  Node *smallerOutput = returnReverseLL(head->next);
+  // smaller Calculation
+
+  // reach at the end of LL
+  Node* temp = smallerOutput;
+  while(temp->next != nullptr){
     temp = temp->next;
-    count++;
   }
-  return newLL;
+  // move first element to the end
+  temp->next = head;
+  head->next = nullptr;
+
+  return smallerOutput;
 }
 
 // check palindrome
@@ -329,17 +331,17 @@ Node *mergeTwoSortedLL(Node *head1, Node *head2) {
   // recursive apporoach
 
   // base case
-  if(head1 == nullptr)
+  if (head1 == nullptr)
     return head2;
-  else if(head2 == nullptr)
+  else if (head2 == nullptr)
     return head1;
 
   Node *result = nullptr;
   // recursive call with smaller calculation
-  if(head1->data <= head2->data){
+  if (head1->data <= head2->data) {
     result = head1;
     result->next = mergeTwoSortedLL(head1->next, head2);
-  }else{
+  } else {
     result = head2;
     result->next = mergeTwoSortedLL(head1, head2->next);
   }
@@ -394,17 +396,17 @@ Node *mergeSort(Node *head) {
 
   // helper values
   // Node *head1 = head;
-  int mid = getLength(head)/2;
+  int mid = getLength(head) / 2;
   Node *beforeMidHead = reachBeforeINode(head, mid);
 
-  //divide the LL
+  // divide the LL
   Node *head2 = beforeMidHead->next;
   beforeMidHead->next = nullptr;
 
-  //recursive call
-  Node* a = mergeSort(head);
-  Node* b = mergeSort(head2);
+  // recursive call
+  Node *a = mergeSort(head);
+  Node *b = mergeSort(head2);
 
-  //smaller Calculation
-  return mergeTwoSortedLL(a,b);
+  // smaller Calculation
+  return mergeTwoSortedLL(a, b);
 }
