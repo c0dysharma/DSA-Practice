@@ -272,14 +272,10 @@ Node *returnReverseLL(Node *head) {
   // reucursive call
   Node *smallerOutput = returnReverseLL(head->next);
   // smaller Calculation
-
-  // reach at the end of LL
-  Node* temp = smallerOutput;
-  while(temp->next != nullptr){
-    temp = temp->next;
-  }
+  //last element is just next element of head
+  Node* tail = head->next;
   // move first element to the end
-  temp->next = head;
+  tail->next = head;
   head->next = nullptr;
 
   return smallerOutput;
