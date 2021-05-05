@@ -265,6 +265,7 @@ void printReverseLL(Node *head) {
 
 // reverse the linked list
 Node *returnReverseLL(Node *head) {
+  // recursive approach
   // base case
   if (head == nullptr || head->next == nullptr)
     return head;
@@ -279,6 +280,23 @@ Node *returnReverseLL(Node *head) {
   head->next = nullptr;
 
   return smallerOutput;
+
+  // // iterative approach
+  // Node* prev = nullptr;
+  // Node* curr = head;
+  // Node* next = head->next;
+
+  // while(next!= nullptr){
+  //   // reverse first value;
+  //   curr->next = prev;
+  //   // updating values
+  //   prev = curr;
+  //   curr = next;
+  //   next = next->next;
+  // }
+  // // one item is left to be added
+  // curr->next = prev;
+  // return curr;
 }
 
 // check palindrome
