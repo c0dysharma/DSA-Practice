@@ -21,7 +21,10 @@ int main(void) {
   //   std::cin >> i;
   //   head = appenedNtoFirst(head, i);
   //   print(head);
-  head = returnOddBeforeEven(head);
+  int M,N;
+  std::cin>>M>>N;
+  // deleteNNodeAfterM(head,M,N);
+  head = swapIJNode(head, M,N);
   print(head);
   deleteList(head);
 

@@ -195,6 +195,7 @@ void deleteList(Node *head) {
   deleteList(head->next);
   // smaller calculation
   delete head;
+  head = nullptr;
 }
 
 // search node: returns -1 if not found otherwise index of value
@@ -457,7 +458,7 @@ void appendLast(Node *&linkedList, int data, Node *&head, Node *&tail) {
   }
   // there are existing elments
   head = linkedList;
-  Node* newNode = new Node(data);
+  Node *newNode = new Node(data);
   tail->next = newNode;
   tail = tail->next;
   tail->next = nullptr;
@@ -498,6 +499,91 @@ Node *returnOddBeforeEven(Node *head) {
   else {
     oddTail->next = evenHead;
     return oddHead;
+  }
+}
+
+// delete every N node after M node
+void deleteNNodeAfterM(Node *head, int M, int N) {
+  Node *temp1 = head;
+  Node *temp2 = nullptr;
+  // untill LL finishes
+  while (head != nullptr) {
+    // get every M nodes
+    temp1 = reachBeforeINode(head, M);
+    // now from M reach to N nodes
+    Node *nodeToBeDeleted = reachBeforeINode(temp1, N + 1);
+    temp2 = nodeToBeDeleted->next;
+    // terminate untill nodeTobeDeleted
+    nodeToBeDeleted->next = nullptr;
+    // delete node
+    if (M) {
+      deleteList(temp1->next);
+      // glue temp1 and temp2
+      temp1->next = temp2;
+    } else // also delelte first element if M==0
+      deleteList(temp1);
+
+    head = temp2;
+  }
+}
+
+// swap ith and jth node
+Node *swapIJNode(Node *head, int i, int j) {
+  if (i == j) // nothing to swap here
+    return head;
+  else if (i > j) { // making i lesser for easier calculation
+    int temp = j;
+    j = i;
+    i = temp;
+  }
+  // Helper Pointers
+  Node *temp2 = reachBeforeINode(head, j);
+  Node *swapVal2 = temp2->next;
+  Node *lastNode = swapVal2->next;
+
+  if (i == 0) { // Case 1: when we need to swap head
+    // Helper pointers
+    Node *swapVal1 = head;
+
+    if (j == 1) { // Case 2: when we need reaplce first 2 elements
+      // swapping
+      swapVal2->next = swapVal1;
+      swapVal1->next = lastNode;
+      return swapVal2;
+    }
+
+    // swapping
+    swapVal2->next = swapVal1->next;
+    temp2->next = swapVal1;
+    swapVal1->next = lastNode;
+
+    // returning new head
+    return swapVal2;
+
+  }else if(j-i == 1){ // Case 3: When head is not included but values are consecutive
+    // Helper pointers
+    Node *temp1 = reachBeforeINode(head, i);
+    Node *swapVa1 = temp1->next;
+
+    // swapping 
+    temp1->next = swapVal2;
+    swapVal2->next = swapVa1;
+    swapVa1->next = lastNode;
+    
+    return head;
+
+  } else { // Case 5: When head is not included and values aren't consecutive
+    // Helper pointers
+    Node *temp1 = reachBeforeINode(head, i);
+    Node *swapVa1 = temp1->next;
+
+    // swapping
+    temp1->next = swapVal2;
+    swapVal2->next = swapVa1->next;
+    temp2->next = swapVa1;
+    swapVa1->next = lastNode;
+
+    return head;
   }
 }
 
