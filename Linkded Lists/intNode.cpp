@@ -1,13 +1,5 @@
 #include <iostream>
-
-class Node {
-public:
-  int data;
-  Node *next;
-
-  // constructor
-  Node(int data) : data(data), next(nullptr) {}
-};
+#include "intNode.hpp"
 
 // printing node func
 void print(const Node *head) {

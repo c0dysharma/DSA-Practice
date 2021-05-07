@@ -1,4 +1,5 @@
-#include "intNode.cpp"
+#include "intNode.hpp"
+#include <iostream>
 
 int main(void) {
   // simple printing
