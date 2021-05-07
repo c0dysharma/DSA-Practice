@@ -86,8 +86,12 @@ Node *reachBeforeINode(Node *head, int i) {
 
 // print i-th position
 void printIthPosition(Node *head, int i) {
-  head = reachBeforeINode(head, i);
-  std::cout << head->next->data << std::endl;
+  int len = getLength(head);
+  if(i<=len){
+    head = reachBeforeINode(head, i);
+    std::cout << head->next->data << std::endl;
+  }else
+    std::cerr << "Out of range!!\n";
 }
 
 // insert at i-th position
@@ -560,16 +564,17 @@ Node *swapIJNode(Node *head, int i, int j) {
     // returning new head
     return swapVal2;
 
-  }else if(j-i == 1){ // Case 3: When head is not included but values are consecutive
+  } else if (j - i == 1) { // Case 3: When head is not included but values are
+                           // consecutive
     // Helper pointers
     Node *temp1 = reachBeforeINode(head, i);
     Node *swapVa1 = temp1->next;
 
-    // swapping 
+    // swapping
     temp1->next = swapVal2;
     swapVal2->next = swapVa1;
     swapVa1->next = lastNode;
-    
+
     return head;
 
   } else { // Case 5: When head is not included and values aren't consecutive
@@ -588,28 +593,53 @@ Node *swapIJNode(Node *head, int i, int j) {
 }
 
 // K reverse the list
-Node* kreverse(Node*head, int k){
+Node *kreverse(Node *head, int k) {
   // base case
-  if(head == nullptr)
+  if (head == nullptr)
     return head;
 
   // smaller calculation
   // get the last node k or if at the end
-  int count {1};
-  Node* tail = head;
-  while(count != k && tail->next != nullptr){
+  int count{1};
+  Node *tail = head;
+  while (count != k && tail->next != nullptr) {
     tail = tail->next;
     count++;
   }
   // termintate the list for reversal
-  Node* head2 = tail->next;
+  Node *head2 = tail->next;
   tail->next = nullptr;
   // LL is going to be reversed so our head is sonna gonna be tail
   tail = head;
   // reverse the list
   head = returnReverseLL(head);
   // recursive call: attach upcoming reversed list to current
-  tail->next = kreverse(head2,k);
+  tail->next = kreverse(head2, k);
   // return starting of reversed list
+  return head;
+}
+
+// bubble sort on LL
+Node *bubbleSort(Node *head) {
+  int len = getLength(head);
+  if (len <= 1) // nothing to sort here
+    return head;
+
+  // per interation places 1 number at its position we need len-1 such interartions
+  for (int i = 0; i < len; i++) {
+    // iteration
+    Node *current = head;
+    int j = 0;
+    while (current->next != nullptr) {
+
+      if (current->data > current->next->data) 
+        // swap
+        head = swapIJNode(head, j, j + 1);
+      else
+        current = current->next;
+      
+      j++;
+    }
+  }
   return head;
 }
