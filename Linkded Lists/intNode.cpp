@@ -587,3 +587,29 @@ Node *swapIJNode(Node *head, int i, int j) {
   }
 }
 
+// K reverse the list
+Node* kreverse(Node*head, int k){
+  // base case
+  if(head == nullptr)
+    return head;
+
+  // smaller calculation
+  // get the last node k or if at the end
+  int count {1};
+  Node* tail = head;
+  while(count != k && tail->next != nullptr){
+    tail = tail->next;
+    count++;
+  }
+  // termintate the list for reversal
+  Node* head2 = tail->next;
+  tail->next = nullptr;
+  // LL is going to be reversed so our head is sonna gonna be tail
+  tail = head;
+  // reverse the list
+  head = returnReverseLL(head);
+  // recursive call: attach upcoming reversed list to current
+  tail->next = kreverse(head2,k);
+  // return starting of reversed list
+  return head;
+}

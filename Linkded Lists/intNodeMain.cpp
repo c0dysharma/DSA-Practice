@@ -14,17 +14,18 @@ int main(void) {
   //   print(head);
   //   std::cout << getLength(head) << std::endl;
 
-    // int val;
-    // std::cin >> val;
+    int val;
+    std::cin >> val;
     // std::cout << findNode(head, val) << std::endl;
   //   int i;
   //   std::cin >> i;
   //   head = appenedNtoFirst(head, i);
   //   print(head);
-  int M,N;
-  std::cin>>M>>N;
+  // int M,N;
+  // std::cin>>M>>N;
   // deleteNNodeAfterM(head,M,N);
-  head = swapIJNode(head, M,N);
+  // head = swapIJNode(head, M,N);
+  head = kreverse(head,val);
   print(head);
   deleteList(head);
 
