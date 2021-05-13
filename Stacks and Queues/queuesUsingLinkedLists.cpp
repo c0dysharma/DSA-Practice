@@ -39,19 +39,22 @@ public:
 
   T getSize() { return size; }
 
-  T front() { return head->data; }
+  T front() {
+    if (isEmpty())
+      return 0;
+    return head->data;
+  }
 
   void enqueue(T val) {
+    Node<T> *newNode = new Node<T>(val);
     // list is empty
     if (isEmpty()) {
-      head = new Node<T>(val);
+      head = newNode;
       tail = head;
-      size++;
-      return;
+    } else {
+      tail->next = newNode;
+      tail = newNode;
     }
-    Node<T> *newNode = new Node<T>(val);
-    tail->next = newNode;
-    tail = newNode;
     size++;
   }
 
