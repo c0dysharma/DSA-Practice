@@ -112,60 +112,60 @@ int largestData(TreeNode<int> *root) {
     int smallAns = largestData(child);
     childData = childData > smallAns ? childData : smallAns;
   }
-  return rootData>childData ? rootData : childData;
+  return rootData > childData ? rootData : childData;
 }
 
-template <class T> int getLevel(TreeNode<T>* root){
+template <class T> int getLevel(TreeNode<T> *root) {
   // check if root insn't null
   if (root == nullptr)
     return 0;
-  
+
   int levels = 0;
-  for(auto child:root->children){
+  for (auto child : root->children) {
     int childLevel = getLevel(child);
     levels = levels > childLevel ? levels : childLevel;
   }
-  return levels+1;
+  return levels + 1;
 }
 
-template <class T>void printDepth(TreeNode<T> *root, int k){
+template <class T> void printDepth(TreeNode<T> *root, int k) {
   // check if root insn't null
   if (root == nullptr)
     return;
 
-  if(k==0){
+  if (k == 0) {
     std::cout << root->data << std::endl;
     return;
   }
 
-  for (auto child:root->children){
-    printDepth(child,k-1);
+  for (auto child : root->children) {
+    printDepth(child, k - 1);
   }
 }
 
-template <class T>int countLeaf(TreeNode<T> *root){
+template <class T> int countLeaf(TreeNode<T> *root) {
   // check if root insn't null
   if (root == nullptr)
     return 0;
 
-  if(root->children.empty()){
+  if (root->children.empty()) {
     return 1;
   }
   int leafCount = 0;
   for (auto child : root->children) { // check if root insn't null
-    leafCount+= countLeaf(child);
+    leafCount += countLeaf(child);
   }
   return leafCount;
 }
 
 // post root traversal
-template<class T> void postTraverse(TreeNode<T> *root){
+template <class T> void postTraverse(TreeNode<T> *root) {
   // check if root insn't null
-  if(root == nullptr){
+  if (root == nullptr) {
     return;
   }
 
-  for(auto child:root->children){
+  for (auto child : root->children) {
     postTraverse(child);
   }
   std::cout << root->data << " ";
@@ -184,7 +184,7 @@ template <class T> void preTraverse(TreeNode<T> *root) {
 }
 
 // delete tree
-template <class T> void deleteTree(TreeNode<T> *root){
+template <class T> void deleteTree(TreeNode<T> *root) {
   // check if root insn't null
   if (root == nullptr) {
     return;
@@ -196,16 +196,135 @@ template <class T> void deleteTree(TreeNode<T> *root){
   delete root;
 }
 
+// find x
+template <class T> bool isPresent(TreeNode<T> *root, T x) {
+  // check if root insn't null
+  if (root == nullptr) {
+    return false;
+  }
+
+  // base case
+  if (root->data == x) {
+    return true;
+  }
+  // recursive call
+  bool found = false;
+  for (auto child : root->children) {
+    found = isPresent(child, x);
+  }
+  return found;
+}
+
+template <class T> int countGreaterThanX(TreeNode<T> *root, T x) {
+  // check if root insn't null
+  if (root == nullptr) {
+    return 0;
+  }
+  int count = 0;
+  for (auto child : root->children) {
+    count += countGreaterThanX(child, x);
+  }
+  if (root->data > x)
+    return count + 1;
+  return count;
+}
+
+template <class T> class Pair {
+public:
+  T nodeData;
+  T nodeSum;
+};
+
+template <class T> Pair<T> largestSum(TreeNode<T> *root) {
+  Pair<T> rootPair;
+  rootPair.nodeData = root->data;
+  rootPair.nodeSum = root->data;
+
+  for (auto child : root->children) {
+    rootPair.nodeSum += child->data;
+  }
+
+  for (auto child : root->children) {
+    Pair<T> childPair = largestSum(child);
+    if (childPair.nodeSum > rootPair.nodeSum) {
+      rootPair.nodeData = childPair.nodeData;
+      rootPair.nodeSum = childPair.nodeSum;
+    }
+  }
+  return rootPair;
+}
+
+template <class T> bool compareTress(TreeNode<T> *rootA, TreeNode<T> *rootB) {
+  // edge cases
+  if (rootA == nullptr || rootB == nullptr ||
+      rootA->children.size() != rootB->children.size())
+    return false;
+
+  if (rootA->data != rootB->data)
+    return false;
+
+  bool childEqual = true;
+  for (int i = 0; i < rootA->children.size(); i++) {
+    childEqual = compareTress(rootA->children[i], rootB->children[i]);
+    if (childEqual == false)
+      return false;
+  }
+  return childEqual;
+}
+
+template <class T> T nextLargerValue(TreeNode<T>*root, int N){
+  // check if root insn't null
+  if (root == nullptr) {
+    return 0;
+  }
+
+  T rootVal = (root->data > N) ? root->data : 0;
+  T childVal;
+
+  for(auto child:root->children){
+    childVal = nextLargerValue(child,N);
+    
+    if(rootVal == 0 && childVal>0)
+      rootVal = childVal;
+
+    if(childVal<rootVal)
+      rootVal = childVal;
+  }
+  return rootVal;
+}
+
+void replaceWithDepth(TreeNode<int>* root, int depth=0){
+  // check if root insn't null
+  if (root == nullptr) {
+    return;
+  }
+  root->data = depth;
+  for(auto child:root->children){
+    replaceWithDepth(child,depth+1);
+  }
+}
+
 int main(void) {
   TreeNode<int> *root = takeInput<int>();
   printTreeLevel(root);
-  std::cout << countNodes(root) << std::endl;
-  std::cout << sumOfNodes(root) << std::endl;
-  std::cout << largestData(root) << std::endl;
-  std::cout << getLevel(root) << std::endl;
-  printDepth(root,2);
-  std::cout << countLeaf(root) << std::endl;
-  preTraverse(root);
+  // std::cout << countNodes(root) << std::endl;
+  // std::cout << sumOfNodes(root) << std::endl;
+  // std::cout << largestData(root) << std::endl;
+  // std::cout << getLevel(root) << std::endl;
+  // printDepth(root,2);
+  // std::cout << countLeaf(root) << std::endl;
+  // preTraverse(root);
+  // int x;
+  // std::cin >> x;
+  // std::cout << std::boolalpha << isPresent(root, x) << std::endl;
+  // std::cout << countGreaterThanX(root, x) << std::endl;
+  // std::cout << largestSum(root).nodeData << std::endl;
+  // TreeNode<int> *root2 = takeInput<int>();
+  // std::cout << boolalpha << compareTress(root, root2) << std::endl;
+  // std::cout << nextLargerValue(root,x) << std::endl;
+  replaceWithDepth(root);
+  printTreeLevel(root);
+  // delete root2;
   delete root;
   return 0;
 }
