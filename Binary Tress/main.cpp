@@ -73,8 +73,99 @@ template <class T> BinaryTreeNode<T> *takeInput() {
   return root;
 }
 
+// return number of nodes present
+template <class T> int countNodes(BinaryTreeNode<T> *root) {
+  if (root == nullptr)
+    return 0;
+  return 1 + countNodes(root->left) + countNodes(root->right);
+}
+
+// returns true if node is present in tree or not
+template <class T> bool isPresent(BinaryTreeNode<T> *root, T data) {
+  if (root == nullptr)
+    return false;
+
+  if (isPresent(root->left, data) || isPresent(root->right, data))
+    return true;
+
+  if (root->data == data)
+    return true;
+
+  return false;
+}
+
+// return height of a tree
+template <class T> int getHeight(BinaryTreeNode<T> *root) {
+  if (root == nullptr)
+    return 0;
+
+  int leftChildLevel = getHeight(root->left);
+  int rightChildLevel = getHeight(root->right);
+
+  return (leftChildLevel > rightChildLevel) ? 1 + leftChildLevel
+                                            : 1 + rightChildLevel;
+}
+
+// mirror nodes of a tree
+template <class T> void mirrorTree(BinaryTreeNode<T> *root) {
+  if (root == nullptr)
+    return;
+
+  mirrorTree(root->left);
+  mirrorTree(root->right);
+  BinaryTreeNode<int> *temp = root->left;
+  root->left = root->right;
+  root->right = temp;
+}
+
+// inorder traverse print
+template <class T> void inorderPrint(BinaryTreeNode<T> *root) {
+  if (root == nullptr)
+    return;
+
+  inorderPrint(root->left);
+  std::cout << root->data << ' ';
+  inorderPrint(root->right);
+}
+
+// preorder traverse print
+template <class T> void preorderPrint(BinaryTreeNode<T> *root) {
+  if (root == nullptr)
+    return;
+
+  std::cout << root->data << ' ';
+  preorderPrint(root->left);
+  preorderPrint(root->right);
+}
+
+// postorder traverse print
+template <class T> void postorderPrint(BinaryTreeNode<T> *root) {
+  if (root == nullptr)
+    return;
+
+  postorderPrint(root->left);
+  postorderPrint(root->right);
+  std::cout << root->data << ' ';
+}
+
+// 1 2 3 4 5 6 7 -1 -1 -1 -1 8 9 -1 -1 -1 -1 -1 -1
 int main(void) {
   BinaryTreeNode<int> *root = takeInput<int>();
   printTree(root);
+  // mirrorTree(root);
+  // printTree(root);
+  // int x;
+  // std::cin >> x;
+  // std::cout << std::boolalpha << isPresent(root,x) << std::endl;
+  // std::cout << countNodes(root) << std::endl;
+  // std::cout << getHeight(root) << std::endl;
+  inorderPrint(root);
+  std::cout << std::endl;
+  preorderPrint(root);
+  std::cout << std::endl;
+  postorderPrint(root);
+  std::cout << std::endl;
+
+  delete root;
   return 0;
 }
