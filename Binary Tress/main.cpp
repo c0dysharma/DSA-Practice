@@ -1,5 +1,6 @@
 #include "binaryTreeNode.h"
 #include <iostream>
+#include <list>
 #include <queue>
 
 // print BTree level wise
@@ -173,7 +174,8 @@ std::pair<int, int> getHeightDiamter(BinaryTreeNode<T> *root) {
   return ansPair;
 }
 
-template <class T> std::pair<int, int> getMinMax(BinaryTreeNode<T> *root){
+// return pair of minimum(first)  and maximum(second)
+template <class T> std::pair<int, int> getMinMax(BinaryTreeNode<T> *root) {
   // using pair's first for minimum and second for maximum
   // edge case and base case
   if (root == nullptr) {
@@ -194,36 +196,164 @@ template <class T> std::pair<int, int> getMinMax(BinaryTreeNode<T> *root){
 
   std::pair<int, int> ans;
   ans.first = std::min(root->data, std::min(lmin, rmin));
-  ans.second = std::max(root->data,std::max(lmax, rmax));
+  ans.second = std::max(root->data, std::max(lmax, rmax));
 
   return ans;
-
 }
 
+// return sum of every nodes
+template <class T> int sumOfAllNodes(BinaryTreeNode<T> *root) {
+  if (root == nullptr)
+    return 0;
+  return root->data + sumOfAllNodes(root->left) + sumOfAllNodes(root->right);
+}
+
+// return true if difference between height of left and right tree of
+// each node is <= 1
+template <class T> std::pair<int, bool> isBalanced(BinaryTreeNode<T> *root) {
+  // using first as height of tree and second bool as tree is balanced or not
+  // till now
+  if (root == nullptr) {
+    std::pair<int, bool> p;
+    p.first = 0;
+    p.second = true;
+    return p;
+  }
+
+  std::pair<int, bool> leftPair = isBalanced(root->left);
+  std::pair<int, bool> rightPair = isBalanced(root->right);
+
+  std::pair<int, bool> ansPair;
+  // balancing is true only when both left and right pair are true
+  // and diffrence between their height is also <= 1
+  ansPair.second = leftPair.second && rightPair.second &&
+                   std::abs(leftPair.first - rightPair.first) <= 1;
+  ansPair.first = std::max(leftPair.first, rightPair.first) + 1;
+
+  return ansPair;
+}
+
+// level order printing
+template <class T> void levelOrderPrint(BinaryTreeNode<T> *root) {
+  if (root == nullptr)
+    return;
+
+  std::queue<BinaryTreeNode<T> *> pendingNodes;
+  pendingNodes.push(root);
+  pendingNodes.push(nullptr);
+
+  while (true) {
+    BinaryTreeNode<T> *currentNode = pendingNodes.front();
+    pendingNodes.pop();
+
+    if (currentNode == nullptr) {
+      std::cout << std::endl;
+      // pendingNodes.pop();
+      if (pendingNodes.empty())
+        break;
+      else
+        pendingNodes.push(nullptr);
+      continue;
+    }
+    std::cout << currentNode->data << ' ';
+    if (currentNode->left != nullptr)
+      pendingNodes.push(currentNode->left);
+    if (currentNode->right != nullptr)
+      pendingNodes.push(currentNode->right);
+  }
+}
+
+// remove leaf nodes
+template <class T> BinaryTreeNode<T> *removeLeafNodes(BinaryTreeNode<T> *root) {
+  // edge case
+  if (root == nullptr)
+    return root;
+
+  // if there is no child its leaf node
+  if (root->left == nullptr && root->right == nullptr) {
+    delete root;
+    return nullptr;
+  }
+
+  root->left = removeLeafNodes(root->left);
+  root->right = removeLeafNodes(root->right);
+  return root;
+}
+
+//  create linked list
+template <class T>
+std::vector<std::list<T> *> returnLinkedList(BinaryTreeNode<T> *root) {
+
+  // helper DS
+  std::vector<std::list<T> *> listvec;
+  std::queue<BinaryTreeNode<T> *> pendingNodes;
+
+  // edge case
+  if (root == nullptr) {
+    return listvec;
+  }
+
+  pendingNodes.push(root);
+  pendingNodes.push(nullptr);
+
+  int currentLevel = 0;
+  while (true) {
+    BinaryTreeNode<T> *currentNode = pendingNodes.front();
+    pendingNodes.pop();
+
+    // when we reached end of a level
+    if (currentNode == nullptr) {
+      if (pendingNodes.empty())
+        break;
+      else {
+        currentLevel++;
+        pendingNodes.push(nullptr);
+      }
+      continue;
+    }
+
+    if (listvec.size() < currentLevel + 1) {
+      // current level's list is not present
+      // create new list and add to vector
+      std::list<T> *newList = new std::list<T>;
+      listvec.push_back(newList);
+    }
+    // list added or already existed just add data in list
+    listvec.at(currentLevel)->push_back(currentNode->data);
+
+    // add children if not null in queue
+    if (currentNode->left != nullptr)
+      pendingNodes.push(currentNode->left);
+    if (currentNode->right != nullptr)
+      pendingNodes.push(currentNode->right);
+  }
+  return listvec;
+}
+
+// print non-siblings node's data
+template <class T> void printNonSiblings(BinaryTreeNode<T> *root) {
+  if (root == nullptr)
+    return;
+
+  // only print data if only one child exists
+  if (root->left == nullptr ^ root->right == nullptr) {
+    if (root->right != nullptr)
+      std::cout << root->right->data << ' ';
+
+    if (root->left != nullptr)
+      std::cout << root->left->data << ' ';
+  }
+
+  if (root->left != nullptr)
+    printNonSiblings(root->left);
+
+  if (root->right != nullptr)
+    printNonSiblings(root->right);
+}
 // 1 2 3 4 5 6 7 -1 -1 -1 -1 8 9 -1 -1 -1 -1 -1 -1
 int main(void) {
   BinaryTreeNode<int> *root = takeInput<int>();
   printTree(root);
-  // mirrorTree(root);
-  // printTree(root);
-  // int x;
-  // std::cin >> x;
-  // std::cout << std::boolalpha << isPresent(root,x) << std::endl;
-  // std::cout << countNodes(root) << std::endl;
-  // std::cout << getHeight(root) << std::endl;
-  // inorderPrint(root);
-  // std::cout << std::endl;
-  // preorderPrint(root);
-  // std::cout << std::endl;
-  // postorderPrint(root);
-  // std::cout << std::endl;
-  std::pair<int, int> ans = getHeightDiamter(root);
-  std::cout << "Height: " << ans.first << std::endl;
-  std::cout << "Diameter: " << ans.second << std::endl;
-
-  std::pair<int, int> minmax = getMinMax(root);
-  std::cout << "Min: " << minmax.first << std::endl;
-  std::cout << "Max: " << minmax.second << std::endl;
 
   delete root;
   return 0;
