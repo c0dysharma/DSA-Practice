@@ -1,4 +1,6 @@
 #include "binaryTreeNode.h"
+#include <algorithm>
+#include <climits>
 #include <iostream>
 #include <list>
 #include <queue>
@@ -180,8 +182,8 @@ template <class T> std::pair<int, int> getMinMax(BinaryTreeNode<T> *root) {
   // edge case and base case
   if (root == nullptr) {
     std::pair<int, int> p;
-    p.first = INT16_MAX;
-    p.second = INT16_MIN;
+    p.first = INT_MAX;
+    p.second = INT_MIN;
 
     return p;
   }
@@ -350,10 +352,337 @@ template <class T> void printNonSiblings(BinaryTreeNode<T> *root) {
   if (root->right != nullptr)
     printNonSiblings(root->right);
 }
+
+// Binary search tree - functions starting bst needs sorted tree
+// i.e smaller data should appear on left and larger on right
+
+// return true if found else returns false
+template <class T> bool bstFindNode(BinaryTreeNode<T> *root, T data) {
+  // base case
+  if (root == nullptr)
+    return false;
+
+  if (data == root->data)
+    return true;
+  else if (data < root->data)
+    return bstFindNode(root->left, data);
+  else
+    return bstFindNode(root->right, data);
+}
+
+// print all the elments in range min and max
+template <class T> void bstPrintInRange(BinaryTreeNode<T> *root, T min, T max) {
+  // base case
+  if (root == nullptr)
+    return;
+
+  if (root->data < min)
+    bstPrintInRange(root->right, min, max);
+  else if (root->data > max)
+    bstPrintInRange(root->left, min, max);
+  else {
+    // data is in/on the range
+    std::cout << root->data << ' ';
+    bstPrintInRange(root->left, min, max);
+    bstPrintInRange(root->right, min, max);
+  }
+}
+
+// returns true if given tree is BST else false
+template <class T>
+bool isBST(BinaryTreeNode<T> *root, T min = INT_MIN, T max = INT_MAX) {
+  if (root == nullptr)
+    return true;
+
+  if (root->data < min || root->data > max)
+    return false;
+
+  bool isLeftBST = isBST(root->left, min, root->data - 1);
+  bool isRightBST = isBST(root->right, root->data, max);
+
+  return isLeftBST && isRightBST;
+}
+
+// create and returns BST from sorted array
+template <class T>
+BinaryTreeNode<T> *createBSTfromArray(T arr[], int startIndex, int stopIndex) {
+  // base case
+  if (startIndex > stopIndex) {
+    return nullptr;
+  }
+  int rootIndex = (startIndex + stopIndex) / 2;
+  BinaryTreeNode<T> *root = new BinaryTreeNode<T>(arr[rootIndex]);
+  root->left = createBSTfromArray(arr, startIndex, rootIndex - 1);
+  root->right = createBSTfromArray(arr, rootIndex + 1, stopIndex);
+
+  return root;
+}
+
+// create sorted linked list from BST
+template <class T> std::list<T> *bstCreateLL(BinaryTreeNode<T> *root) {
+  // base case
+  if (root == nullptr)
+    return nullptr;
+
+  std::list<T> *finalList = bstCreateLL(root->left);
+
+  if (finalList != nullptr)
+    finalList->push_back(root->data);
+  else {
+    finalList = new std::list<T>;
+    finalList->push_back(root->data);
+  }
+
+  std::list<T> *rightList = bstCreateLL(root->right);
+  if (rightList != nullptr)
+    finalList->push_back(rightList->front());
+
+  return finalList;
+}
+
+// returns path from root to the node with data
+template <class T>
+std::vector<T> *getRootToNodePath(BinaryTreeNode<T> *root, T data) {
+  // base case
+  if (root == nullptr)
+    return nullptr;
+
+  if (root->data == data) {
+    std::vector<T> *itsMe = new std::vector<T>;
+    itsMe->push_back(root->data);
+    return itsMe;
+  }
+
+  // we need to call both sides since function doesn't only expects as bst
+  // but only if we haven't found the data node
+  std::vector<T> *leftOutput = getRootToNodePath(root->left, data);
+  if (leftOutput != nullptr) {
+    leftOutput->push_back(root->data);
+    return leftOutput;
+  }
+
+  std::vector<T> *rightOutput = getRootToNodePath(root->right, data);
+  if (rightOutput != nullptr) {
+    rightOutput->push_back(root->data);
+    return rightOutput;
+  }
+
+  // when none returns (node not found)
+  return nullptr;
+}
+
+// attach duplicates to the left
+template <class T> void attachDuplicateLeft(BinaryTreeNode<T> *root) {
+  if (root == nullptr)
+    return;
+
+  // create duplicate of root node
+  BinaryTreeNode<T> *newNode = new BinaryTreeNode<T>(root->data);
+  // attach newNode to left and current left to newNode
+  BinaryTreeNode<T> *left = root->left;
+  root->left = newNode;
+  newNode->left = left;
+
+  // recursive call on both sides
+  attachDuplicateLeft(newNode->left);
+  attachDuplicateLeft(root->right);
+}
+
+// adds elements to the vector inorder fashion
+template <class T>
+void addElementsToVector(BinaryTreeNode<T> *root, std::vector<T> &vec) {
+  if (root == nullptr)
+    return;
+
+  addElementsToVector(root->left, vec);
+  vec.push_back(root->data);
+  addElementsToVector(root->right, vec);
+}
+
+// prints all the pair which sums up to S
+void printPairs(BinaryTreeNode<int> *root, int S) {
+  if (root == nullptr)
+    return;
+
+  // create vector of the all elements
+  std::vector<int> vec;
+  addElementsToVector(root, vec);
+  // sort the elements
+  std::sort(vec.begin(), vec.end());
+
+  // algo to find and print sum
+  int i = 0;
+  int j = vec.size() - 1;
+  while (i <= j) {
+    int iVal = vec.at(i);
+    int jVal = vec.at(j);
+
+    if (iVal + jVal == S) {
+      std::cout << iVal << ' ' << jVal << std::endl;
+      i++;
+      j--;
+    } else if (iVal + jVal < S)
+      i++;
+    else
+      j--;
+  }
+}
+
+// return LCA(Lowest Common ancestor) of N1 and N2 node, -1 if not found
+template <class T> T returnLSC(BinaryTreeNode<T> *root, T N1, T N2) {
+  if (root == nullptr)
+    return -1;
+
+  // if we found any node on root thats the ancestor
+  if (root->data == N1)
+    return N1;
+  if (root->data == N2)
+    return N2;
+
+  // recursive call
+  T leftN = returnLSC(root->left, N1, N2);
+  T rightN = returnLSC(root->right, N1, N2);
+
+  // cases
+  // when none of the node found
+  if (leftN == -1 && rightN == -1)
+    return -1;
+
+  // when both nodes are found
+  if (leftN != -1 && rightN != -1)
+    return root->data;
+
+  // when exactly one node is found
+  if (leftN == -1 ^ rightN == -1) {
+    if (leftN != -1)
+      return leftN;
+
+    if (rightN != -1)
+      return rightN;
+  }
+  // never reach here
+  return -1;
+}
+
+// return pair with min,max,isBST, maximum BST height
+struct largestBSTstruct {
+public:
+  int min;
+  int max;
+  bool bst;
+  int height;
+};
+
+template <class T> largestBSTstruct getLargetBST(BinaryTreeNode<T> *root) {
+  largestBSTstruct final;
+
+  if (root == nullptr) {
+    final.bst = true;
+    final.height = 0;
+    final.min = INT_MAX;
+    final.max = INT_MIN;
+
+    return final;
+  }
+
+  // doing recursive call on both sides
+  largestBSTstruct leftData = getLargetBST(root->left);
+  largestBSTstruct rightData = getLargetBST(root->right);
+
+  // whole tree is bst only when these conditions satsfies
+  bool currBST = leftData.max < root->data && rightData.min > root->data;
+  final.bst = leftData.bst && rightData.bst && currBST;
+
+  // increase height count only if it is bst
+  final.height = (final.bst) ? std::max(leftData.height, rightData.height) + 1
+                             : std::max(leftData.height, rightData.height);
+
+  // minimum/maximum amoung root's data, left's data, right's data
+  final.min = std::min(root->data, std::min(leftData.min, rightData.min));
+  final.max = std::max(root->data, std::max(leftData.max, rightData.max));
+
+  return final;
+}
+
+// replace everynode with sum of itself and all the node greater than itself
+int bstReplaceLargerSum(BinaryTreeNode<int> *root, int sum = 0){
+  if(root == nullptr)
+    return 0;
+
+  // we will do recursive call in reverse inorder(right, root, left) fashion
+  // since we need sum or root's parent's right bcz its already greater than itself
+  // and we are returning int(sum of children) because they are going to changed
+  int rightSum = bstReplaceLargerSum(root->right, sum);
+  int rootData = root->data;
+  root->data = rootData+rightSum+sum;
+  int leftSum = bstReplaceLargerSum(root->left, root->data);
+
+  return leftSum+rightSum+rootData;
+}
+
 // 1 2 3 4 5 6 7 -1 -1 -1 -1 8 9 -1 -1 -1 -1 -1 -1
+// 4 2 6 1 3 5 7 -1 -1 -1 -1 -1 -1 -1 -1
+// 4 2 6 1 30 5 7 -1 -1 -1 -1 -1 -1 -1 -1
 int main(void) {
   BinaryTreeNode<int> *root = takeInput<int>();
   printTree(root);
+
+  // int data;
+  // std::cin >> data;
+  // std::cout << std::boolalpha << bstFindNode(root, data) << std::endl;
+
+  // int min, max;
+  // std::cout << "enter lower bound: ";
+  // std::cin >> min;
+  // std::cout << "enter upper bound: ";
+  // std::cin >> max
+
+  // bstPrintInRange(root, min, max);
+  // std::cout << std::boolalpha << isBST(root) << std::endl;
+  // int arr[]{1, 2, 3, 4, 5, 6, 7};
+  // BinaryTreeNode<int> *root = createBSTfromArray(arr, 0, 6);
+  // preorderPrint(root);
+  // std::cout << std::endl;
+
+  // std::list<int> *yo = bstCreateLL(root);
+  // if (yo != nullptr) {
+  //   for (auto a : *yo) {
+  //     std::cout << a << ' ';
+  //   }
+  //   std::cout << std::endl;
+  // }
+  // delete yo;
+
+  // int findData;
+  // std::cout << "what's the destination?: ";
+  // std::cin >> findData;
+  // std::vector<int> *iGotData = getRootToNodePath(root, findData);
+
+  // if (iGotData != nullptr) {
+  //   for (int track : *iGotData) {
+  //     std::cout << track << ' ';
+  //   }
+  //   std::cout << std::endl;
+  // }
+  // delete iGotData;
+  // std::cout << "Yo! what's the sum? ";
+  // int S;
+  // std::cin >> S;
+  // printPairs(root,S);
+  // attachDuplicateLeft(root);
+  // levelOrderPrint(root);
+  // int n1, n2;
+  // std::cin >> n1 >> n2;
+  // std::cout << returnLSC(root, n1, n2) << std::endl;
+
+  // largestBSTstruct final = getLargetBST(root);
+  // std::cout << "Height: " << final.height << std::endl;
+  // std::cout << "Min: " << final.min << std::endl;
+  // std::cout << "Max: " << final.max << std::endl;
+  // std::cout << std::boolalpha << "BST: " << final.bst << std::endl;
+
+  std::cout << "Sum: " << bstReplaceLargerSum(root) << std::endl;
+  levelOrderPrint(root);
 
   delete root;
   return 0;
