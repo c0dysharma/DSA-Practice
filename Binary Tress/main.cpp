@@ -605,19 +605,46 @@ template <class T> largestBSTstruct getLargetBST(BinaryTreeNode<T> *root) {
 }
 
 // replace everynode with sum of itself and all the node greater than itself
-int bstReplaceLargerSum(BinaryTreeNode<int> *root, int sum = 0){
-  if(root == nullptr)
+int bstReplaceLargerSum(BinaryTreeNode<int> *root, int sum = 0) {
+  if (root == nullptr)
     return 0;
 
   // we will do recursive call in reverse inorder(right, root, left) fashion
-  // since we need sum or root's parent's right bcz its already greater than itself
-  // and we are returning int(sum of children) because they are going to changed
+  // since we need sum or root's parent's right bcz its already greater than
+  // itself and we are returning int(sum of children) because they are going to
+  // changed
   int rightSum = bstReplaceLargerSum(root->right, sum);
   int rootData = root->data;
-  root->data = rootData+rightSum+sum;
+  root->data = rootData + rightSum + sum;
   int leftSum = bstReplaceLargerSum(root->left, root->data);
 
-  return leftSum+rightSum+rootData;
+  return leftSum + rightSum + rootData;
+}
+
+// print root to leaf node path that sum to k
+void printSumKtoLeafNode(BinaryTreeNode<int> *root, int k,
+                         std::string path = "") {
+  // edge case
+  if (root == nullptr)
+    return;
+
+  // add current node to the path only if it doesn't exceed k val
+  if (root->data <= k) {
+    path += std::to_string(root->data);
+    path += ' ';
+  } else
+    return;
+
+  // base case
+  // check first if its a leaf node
+  if (root->left == nullptr && root->right == nullptr) {
+    if (root->data == k)
+      std::cout << path << std::endl;
+  }
+
+  // recursive call on both sides with decreasing k
+  printSumKtoLeafNode(root->left, k - (root->data), path);
+  printSumKtoLeafNode(root->right, k - (root->data), path);
 }
 
 // 1 2 3 4 5 6 7 -1 -1 -1 -1 8 9 -1 -1 -1 -1 -1 -1
@@ -626,64 +653,6 @@ int bstReplaceLargerSum(BinaryTreeNode<int> *root, int sum = 0){
 int main(void) {
   BinaryTreeNode<int> *root = takeInput<int>();
   printTree(root);
-
-  // int data;
-  // std::cin >> data;
-  // std::cout << std::boolalpha << bstFindNode(root, data) << std::endl;
-
-  // int min, max;
-  // std::cout << "enter lower bound: ";
-  // std::cin >> min;
-  // std::cout << "enter upper bound: ";
-  // std::cin >> max
-
-  // bstPrintInRange(root, min, max);
-  // std::cout << std::boolalpha << isBST(root) << std::endl;
-  // int arr[]{1, 2, 3, 4, 5, 6, 7};
-  // BinaryTreeNode<int> *root = createBSTfromArray(arr, 0, 6);
-  // preorderPrint(root);
-  // std::cout << std::endl;
-
-  // std::list<int> *yo = bstCreateLL(root);
-  // if (yo != nullptr) {
-  //   for (auto a : *yo) {
-  //     std::cout << a << ' ';
-  //   }
-  //   std::cout << std::endl;
-  // }
-  // delete yo;
-
-  // int findData;
-  // std::cout << "what's the destination?: ";
-  // std::cin >> findData;
-  // std::vector<int> *iGotData = getRootToNodePath(root, findData);
-
-  // if (iGotData != nullptr) {
-  //   for (int track : *iGotData) {
-  //     std::cout << track << ' ';
-  //   }
-  //   std::cout << std::endl;
-  // }
-  // delete iGotData;
-  // std::cout << "Yo! what's the sum? ";
-  // int S;
-  // std::cin >> S;
-  // printPairs(root,S);
-  // attachDuplicateLeft(root);
-  // levelOrderPrint(root);
-  // int n1, n2;
-  // std::cin >> n1 >> n2;
-  // std::cout << returnLSC(root, n1, n2) << std::endl;
-
-  // largestBSTstruct final = getLargetBST(root);
-  // std::cout << "Height: " << final.height << std::endl;
-  // std::cout << "Min: " << final.min << std::endl;
-  // std::cout << "Max: " << final.max << std::endl;
-  // std::cout << std::boolalpha << "BST: " << final.bst << std::endl;
-
-  std::cout << "Sum: " << bstReplaceLargerSum(root) << std::endl;
-  levelOrderPrint(root);
-
   delete root;
   return 0;
 }
