@@ -176,39 +176,42 @@ int returnDiffrenceKPair(int *arr, int size, int K) {
   return pairCount;
 }
 
+// largest subarray count sum to 0
+int returnCountLargestSubaraySum0(int*arr, int size){
+  // contains sum till now and their index
+  std::unordered_map<int,int> mp;
+  int maxLength = 0;
+  // starting with sum 0 and index -1
+  int sum = 0;
+  int i = -1;
+  mp[sum] = i;
+  // traverse whole array
+  while(i<size-1){
+    i++;
+    sum+=arr[i]; 
+    // unique sum add to map
+    if(mp.count(sum) == 0)
+      mp[sum] = i;
+    else{
+      // till we find a sum that already exist
+      int len = i - mp[sum];
+      // if we get same sum it means value between them added to be 0
+      // we can get # of elements by subtracting elements
+      maxLength = std::max(maxLength, len);
+    }
+  }
+
+  return maxLength;
+}
+
 int main(void) {
-  //   int arr[11] = {1, 1, 2, 2, 3, 4, 5, 6, 7, 8, 8};
-  //   std::vector<int> items = removeDuplicates(arr, 11);
-  //   for (int i : items) {
-  //     std::cout << i << std::endl;
-  //   }
-  //   std::cout << std::endl;
-  //   std::cout << returnMaximum(arr, 11) << std::endl;
-  // int arr1[6] = {2, 6, 8, 5, 2, 3};
-  // int arr2[4] = {2, 3, 4, 7};
-
-  // printIntersection(arr1, 6, arr2, 4);
-  // std::cout << std::endl;
-
-  // int sum0[4] = {2, 1, -2, 3};
-  // std::cout << returnPairSum(sum0, 4) << std::endl;
-
-  // std::string str;
-  // std::cin >> str;
-
-  // str = returnDistanctCharacters(str);
-  // std::cout << "New string: " << str << std::endl;
-
   int len;
   std::cin >> len;
   int arr[len];
   for (int i = 0; i < len; i++) {
     std::cin >> arr[i];
   }
-  int K;
-  std::cin >> K;
 
-  // printLongestSequence(arr, len);
-  std::cout << returnDiffrenceKPair(arr, len, K) << std::endl;
+  std::cout << returnCountLargestSubaraySum0(arr,len) << std::endl;
   return 0;
 }
