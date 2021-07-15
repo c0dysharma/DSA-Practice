@@ -96,19 +96,121 @@ void printKthLargest(int *arr, int len, int k) {
   std::cout << pq.top() << std::endl;
 }
 
-int main(void) {
-  int len;
-  std::cin >> len;
-  int arr[len];
+// helper call for next function
+class ElementInfo {
+public:
+  int element;
+  int elementIndex;
+  int arrayIndex;
 
-  for (int i = 0; i < len; i++) {
-    std::cin >> arr[i];
+  ElementInfo(int element, int elementIndex, int arrayIndex)
+      : element{element}, elementIndex{elementIndex}, arrayIndex{arrayIndex} {}
+};
+bool operator<(const ElementInfo &lhs, const ElementInfo &rhs) {
+  return lhs.element > rhs.element;
+}
+
+// merge K sorted arrays into one
+std::vector<int> mergeKSortedArrays(std::vector<std::vector<int>> container) {
+  // get the initial values and add to pq
+  std::priority_queue<ElementInfo> pq;
+  for (int i = 0; i < container.size(); i++) {
+    pq.emplace(container[i][0], 0, i);
   }
 
-  //   std::cout << isHeap(arr, len) << std::endl;
-  int k;
-  std::cin >> k;
-  //   printMaxKElements(arr, len, k);
-  printKthLargest(arr, len, k);
+  // now pq has smallest element on top
+  std::vector<int> mergedArray;
+  while (!pq.empty()) {
+    mergedArray.push_back(pq.top().element);
+    int elemIndex = pq.top().elementIndex;
+    int arrIndex = pq.top().arrayIndex;
+    elemIndex++;
+    // remove the element
+    pq.pop();
+    if (elemIndex != container[arrIndex].size())
+      pq.emplace(container[arrIndex][elemIndex], elemIndex, arrIndex);
+  }
+
+  return mergedArray;
+}
+
+// print median at every element
+void printMedians(int *arr, int len) {
+  std::priority_queue<int> maxHeap;
+  std::priority_queue<int, std::vector<int>, std::greater<int>> minHeap;
+
+  maxHeap.push(arr[0]);
+  std::cout << maxHeap.top() << std::endl;
+
+  for (int i = 1; i < len; i++) {
+    // add based on value
+    if (arr[i] < maxHeap.top())
+      maxHeap.push(arr[i]);
+    else
+      minHeap.push(arr[i]);
+
+    int maxHeapSize = maxHeap.size();
+    int minHeapSize = minHeap.size();
+
+    // balance the shits
+    if (maxHeapSize - minHeapSize > 1) {
+      int temp = maxHeap.top();
+      minHeap.push(temp);
+      maxHeap.pop();
+    }
+    if (minHeapSize - maxHeapSize > 1) {
+      int temp = minHeap.top();
+      maxHeap.push(temp);
+      minHeap.pop();
+    }
+
+    maxHeapSize = maxHeap.size();
+    minHeapSize = minHeap.size();
+
+    // find and print median
+    // if(maxHeapSize == 1 && minHeapSize == 0)
+      // std::cout << maxHeap.top() << std::endl;
+    
+    if((maxHeapSize+minHeapSize) % 2 == 0)
+      std::cout << (maxHeap.top() + minHeap.top()) / 2 << std::endl;
+    else{
+      if(maxHeapSize>minHeapSize)
+        std::cout << maxHeap.top() << std::endl;
+      else 
+        std::cout << minHeap.top() << std::endl;
+    }
+  }
+}
+
+int main(void) {
+  int K;
+  std::cin >> K;
+
+  // std::vector<std::vector<int>> container;
+  // for (int i = 0; i < K; i++) {
+  //   int len;
+  //   std::cin >> len;
+  //   std::vector<int> arr;
+  //   for (int i = 0; i < len; i++) {
+  //     int temp;
+  //     std::cin >> temp;
+  //     arr.push_back(temp);
+  //   }
+
+  //   container.push_back(arr);
+  // }
+
+  // std::vector<int> mergedArray = mergeKSortedArrays(container);
+  // for (int a : mergedArray) {
+  //   std::cout << a << ' ';
+  // }
+  // std::cout << std::endl;
+
+  int arr[K];
+  for(int i = 0 ; i<K; i++){
+    std::cin >> arr[i];
+  }
+  printMedians(arr,K);
+
   return 0;
 }
