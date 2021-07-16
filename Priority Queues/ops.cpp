@@ -169,22 +169,55 @@ void printMedians(int *arr, int len) {
 
     // find and print median
     // if(maxHeapSize == 1 && minHeapSize == 0)
-      // std::cout << maxHeap.top() << std::endl;
-    
-    if((maxHeapSize+minHeapSize) % 2 == 0)
+    // std::cout << maxHeap.top() << std::endl;
+
+    if ((maxHeapSize + minHeapSize) % 2 == 0)
       std::cout << (maxHeap.top() + minHeap.top()) / 2 << std::endl;
-    else{
-      if(maxHeapSize>minHeapSize)
+    else {
+      if (maxHeapSize > minHeapSize)
         std::cout << maxHeap.top() << std::endl;
-      else 
+      else
         std::cout << minHeap.top() << std::endl;
     }
   }
 }
 
+// return time taken till k index person get ticket. 1 unit time is taken
+//  when actually ticket is given no time taken in removing and adding person
+int buyTicket(int *arr,int len, int k) {
+  int timeTaken = 0;
+  std::queue<int> q;
+  std::priority_queue<int> pq;
+
+  // fill up our queues
+  for(int i = 0; i<len; i++){
+    q.push(i);
+    pq.push(arr[i]);
+  }
+
+  while(!pq.empty()){
+    // we got the value with its priority
+    if(arr[q.front()] == pq.top()){
+      timeTaken++;
+      if(q.front() == k)
+        break;
+    
+      q.pop();
+      pq.pop();
+    }else{
+      // its not the value required send it to back
+      int temp = q.front();
+      q.pop();
+      q.push(temp);
+    }
+  }
+
+  return timeTaken;
+
+}
 int main(void) {
-  int K;
-  std::cin >> K;
+  int len;
+  std::cin >> len;
 
   // std::vector<std::vector<int>> container;
   // for (int i = 0; i < K; i++) {
@@ -206,11 +239,15 @@ int main(void) {
   // }
   // std::cout << std::endl;
 
-  int arr[K];
-  for(int i = 0 ; i<K; i++){
+  int arr[len];
+  for (int i = 0; i < len; i++) {
     std::cin >> arr[i];
   }
-  printMedians(arr,K);
+  int k;
+  std::cin >> k;
+
+  std::cout << buyTicket(arr,len,k) << std::endl;
+  // printMedians(arr, K);
 
   return 0;
 }
