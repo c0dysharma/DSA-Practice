@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 
 class TrieNode {
@@ -15,12 +16,12 @@ public:
     isTerminal = false;
   }
 
-  ~TrieNode() {
-    for (int i = 0; i < 26; i++) {
-      delete children[i];
-      children[i] = nullptr;
-    }
-  }
+  // ~TrieNode() {
+  //   for (int i = 0; i < 26; i++) {
+  //     delete children[i];
+  //     children[i] = nullptr;
+  //   }
+  // }
 };
 
 class Trie {
@@ -47,9 +48,12 @@ class Trie {
     __insertWord(child, word.substr(1));
   }
 
-  bool __searchWord(TrieNode *root, std::string word) {
+  bool __searchWord(TrieNode *root, std::string word, bool isSuffix = false) {
     // base case
     if (word.size() == 0) {
+      if (isSuffix)
+        return true;
+
       if (root->isTerminal == true)
         return true;
       return false;
@@ -62,7 +66,7 @@ class Trie {
     if (root->children[index] == nullptr)
       return false;
     // recursive call
-    return __searchWord(child, word.substr(1));
+    return __searchWord(child, word.substr(1), isSuffix);
   }
 
   void __removeWord(TrieNode *root, std::string word) {
@@ -100,10 +104,64 @@ class Trie {
     }
   }
 
+  void __autoComplete(TrieNode *root, std::string word,
+                      std::string output = "") {
+
+    // base case
+    if (root == nullptr)
+      return;
+
+    // if (root->val == '\0' &&)
+    //   return;
+
+    // smaller caclulation
+    if (root->val != word.at(word.length() - 1))
+      output += root->val;
+
+    if (root->isTerminal)
+      std::cout << word + output << std::endl;
+
+    // recursive call
+    for (int i = 0; i < 26; i++) {
+      __autoComplete(root->children[i], word, output);
+    }
+  }
+
 public:
   Trie() { root = new TrieNode('\0'); }
-  void insertWord(std::string word) { __insertWord(root, word); }
-  bool searchWord(std::string word) { return __searchWord(root, word); }
+  // now just use isSuffix=true for enabling suffix trie
+  // support(pattern matching)
+
+  void insertWord(std::string word, bool isSuffix = false) {
+    if (isSuffix) {
+      int wordLen = word.length();
+      for (int i = 0; i < wordLen; i++) {
+        __insertWord(root, word.substr(i));
+      }
+    } else
+      __insertWord(root, word);
+  }
+  // now just use isSuffix=true for enabling suffix trie
+  // support(pattern matching)
+  bool searchWord(std::string word, bool isSuffix = false) {
+    return __searchWord(root, word, isSuffix);
+  }
+  // bool isTerminal(){return root->isTerminal;}
+  // char thisChar(){return root->val;}
+  // TrieNode** getChild(){return root->children;}
+
   void removeWord(std::string word) { __removeWord(root, word); }
-  ~Trie() { delete root; }
+  void autoComplete(std::string word) {
+
+    TrieNode *lastNode = root;
+    int len = word.length();
+    for (int i = 0; i < len; i++) {
+      int index = word.at(i) - 'a';
+      lastNode = lastNode->children[index];
+    }
+    if (lastNode != nullptr)
+      __autoComplete(lastNode, word);
+    std::cout << "Nothing to Suggest Here!" << std::endl;
+  }
+  // ~Trie() { delete root; }
 };
