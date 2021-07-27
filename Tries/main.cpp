@@ -1,18 +1,18 @@
 #include "Trie.h"
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 
 bool isPalindrome(Trie data, int len, std::string words[]) {
   // add all words first
-  for(int i = 0; i<len; i++){
+  for (int i = 0; i < len; i++) {
     data.insertWord(words[i]);
   }
-  // check if their reverse exists or not 
-  for(int i = 0; i<len; i++){
+  // check if their reverse exists or not
+  for (int i = 0; i < len; i++) {
     std::reverse(words[i].begin(), words[i].end());
-    if(data.searchWord(words[i]))
+    if (data.searchWord(words[i]))
       return true;
-    else 
+    else
       continue;
   }
   return false;
@@ -29,9 +29,6 @@ int main(void) {
     test.insertWord(words[i]);
   }
 
-  // std::string pattern;
-  // std::cin >> pattern;
-  // std::cout << isPalindrome(test,len,words) << std::endl;
   std::string w;
   std::cin >> w;
   test.autoComplete(w);

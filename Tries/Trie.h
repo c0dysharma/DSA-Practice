@@ -16,12 +16,12 @@ public:
     isTerminal = false;
   }
 
-  // ~TrieNode() {
-  //   for (int i = 0; i < 26; i++) {
-  //     delete children[i];
-  //     children[i] = nullptr;
-  //   }
-  // }
+  ~TrieNode() {
+    for (int i = 0; i < 26; i++) {
+      delete children[i];
+      children[i] = nullptr;
+    }
+  }
 };
 
 class Trie {
@@ -111,9 +111,6 @@ class Trie {
     if (root == nullptr)
       return;
 
-    // if (root->val == '\0' &&)
-    //   return;
-
     // smaller caclulation
     if (root->val != word.at(word.length() - 1))
       output += root->val;
@@ -146,13 +143,10 @@ public:
   bool searchWord(std::string word, bool isSuffix = false) {
     return __searchWord(root, word, isSuffix);
   }
-  // bool isTerminal(){return root->isTerminal;}
-  // char thisChar(){return root->val;}
-  // TrieNode** getChild(){return root->children;}
 
   void removeWord(std::string word) { __removeWord(root, word); }
-  void autoComplete(std::string word) {
 
+  void autoComplete(std::string word) {
     TrieNode *lastNode = root;
     int len = word.length();
     for (int i = 0; i < len; i++) {
@@ -163,5 +157,6 @@ public:
       __autoComplete(lastNode, word);
     std::cout << "Nothing to Suggest Here!" << std::endl;
   }
-  // ~Trie() { delete root; }
+
+  ~Trie() { delete root; }
 };
