@@ -12,7 +12,7 @@ int minimumCoinChange_bf(int n, int coins[], int size) {
     return 0;
 
   // recursive calls
-  int temp[size] = {INT_MAX};
+  int temp[size] = {0};
   for (int i = 0; i < size; i++) {
     int val = n - coins[i];
     if (val >= 0)
@@ -34,7 +34,7 @@ int minimumCoinChange_mem(int n, int coins[], int size, int arr[]) {
     return arr[n];
 
   // recursive calls
-  int temp[size] = {INT_MAX};
+  int temp[size] = {0};
 
   for (int i = 0; i < size; i++) {
     int val = n - coins[i];
